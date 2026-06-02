@@ -77,6 +77,7 @@ export default function CinematicSky({ isOpeningLetter = false, isNoteOpen = fal
     };
 
     const onMouseMove = (event: MouseEvent) => {
+      if (mediaQuery.matches) return; // Disable on mobile
       schedulePointer(
         (event.clientX / window.innerWidth) * 100,
         (event.clientY / window.innerHeight) * 100
@@ -84,6 +85,7 @@ export default function CinematicSky({ isOpeningLetter = false, isNoteOpen = fal
     };
 
     const onTouchMove = (event: TouchEvent) => {
+      if (mediaQuery.matches) return; // Disable on mobile
       const touch = event.touches[0];
       if (!touch) return;
       schedulePointer(
@@ -92,8 +94,10 @@ export default function CinematicSky({ isOpeningLetter = false, isNoteOpen = fal
       );
     };
 
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    if (!mediaQuery.matches) {
+      window.addEventListener("mousemove", onMouseMove, { passive: true });
+      window.addEventListener("touchmove", onTouchMove, { passive: true });
+    }
 
     return () => {
       if (rafRef.current !== null) {

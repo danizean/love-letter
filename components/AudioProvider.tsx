@@ -222,12 +222,6 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
       setIsAudioError(false);
     };
 
-    const onTimeUpdate = () => {
-      const nextTime = audio.currentTime;
-      setCurrentTime(nextTime);
-      setActiveLyricIndex(getActiveLyricIndex(nextTime));
-    };
-
     const onEnded = () => {
       setIsPlaying(false);
       setCurrentTime(0);
@@ -240,7 +234,6 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     };
 
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
-    audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("ended", onEnded);
     audio.addEventListener("error", onError);
 
@@ -251,11 +244,33 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
 
     return () => {
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
-      audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("ended", onEnded);
       audio.removeEventListener("error", onError);
     };
   }, [getActiveLyricIndex]);
+
+  // 60fps Audio Sync Loop
+  useEffect(() => {
+    let rafId: number;
+    const audio = audioRef.current;
+    
+    const updateTime = () => {
+      if (audio && isPlaying) {
+        const nextTime = audio.currentTime;
+        setCurrentTime(nextTime);
+        setActiveLyricIndex(getActiveLyricIndex(nextTime));
+        rafId = requestAnimationFrame(updateTime);
+      }
+    };
+
+    if (isPlaying) {
+      rafId = requestAnimationFrame(updateTime);
+    }
+
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [isPlaying, getActiveLyricIndex]);
 
   const togglePlay = useCallback(() => {
     const audio = audioRef.current;
@@ -264,15 +279,24 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
+      setWantsMusic(false);
     } else {
-      audio
-        .play()
-        .then(() => {
-          setIsPlaying(true);
-        })
-        .catch(() => {
-          setIsAudioError(true);
-        });
+      // User explicitly requests play
+      setWantsMusic(true);
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+            setIsAudioError(false);
+          })
+          .catch((error) => {
+            console.warn("Playback prevented:", error);
+            setIsPlaying(false);
+            setIsAudioError(true);
+          });
+      }
     }
   }, [isPlaying]);
 

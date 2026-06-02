@@ -176,10 +176,9 @@ function FloatingParticle({ top, left, size, yRange, floatDur, delay, color, dep
         width: size,
         height: size,
         background: color,
-        boxShadow: `0 0 ${size * 3}px ${color}`,
         y: particleY,
         zIndex: 4,
-        willChange: "transform",
+        willChange: "transform, opacity",
       }}
       animate={{
         y: [0, yRange * depthFactor, 0],
@@ -191,7 +190,16 @@ function FloatingParticle({ top, left, size, yRange, floatDur, delay, color, dep
         opacity: { duration: floatDur * 0.8, repeat: Infinity, ease: "easeInOut", delay },
         scale: { duration: floatDur * 0.5, repeat: Infinity, ease: "easeInOut", delay },
       }}
-    />
+    >
+      <div 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none" 
+        style={{ 
+          width: size * 4, 
+          height: size * 4, 
+          background: `radial-gradient(circle, ${color} 0%, transparent 70%)` 
+        }} 
+      />
+    </motion.div>
   );
 }
 
@@ -257,7 +265,6 @@ export default function SpaceParallaxLayer({
                 : s.id % 3 === 1
                 ? "rgba(255,255,255,0.06)"
                 : "rgba(253,230,138,0.05)",
-              boxShadow: `0 0 ${s.size * 3}px rgba(255,255,255,0.05)`,
             }}
             animate={{
               opacity: [0.3, 1, 0.3],
@@ -269,7 +276,16 @@ export default function SpaceParallaxLayer({
               ease: "easeInOut",
               delay: s.id * 0.2,
             }}
-          />
+          >
+            <div 
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none" 
+              style={{ 
+                width: s.size * 4, 
+                height: s.size * 4, 
+                background: `radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)` 
+              }} 
+            />
+          </motion.div>
         ))}
         {/* Comets floating in deep space */}
         {!isLowPerf && (

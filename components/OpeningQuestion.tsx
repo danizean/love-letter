@@ -45,15 +45,24 @@ export default function OpeningQuestion({ onSelect }: OpeningQuestionProps) {
     [currentTime, safeDuration, seek]
   );
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handlePlayAndProceed = useCallback(() => {
-    // Start music if not playing, but we don't need to await it
+    if (isLoading) return;
+    setIsLoading(true);
+
+    // Start music immediately to unlock audio context in the same synchronous click event
     if (!isPlaying) {
       togglePlay();
     }
     setWantsMusic(true);
-    setIsVisible(false);
-    setTimeout(() => onSelect(true), 420);
-  }, [isPlaying, togglePlay, setWantsMusic, onSelect]);
+
+    // Allow a tiny delay for audio buffer to start before triggering heavy unmount animations
+    setTimeout(() => {
+      setIsVisible(false);
+      setTimeout(() => onSelect(true), 420);
+    }, 200);
+  }, [isPlaying, togglePlay, setWantsMusic, onSelect, isLoading]);
 
   // Handle keyboard shortcuts (space to play/pause)
   useEffect(() => {
@@ -65,7 +74,7 @@ export default function OpeningQuestion({ onSelect }: OpeningQuestionProps) {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [togglePlay]);
+  }, [handlePlayAndProceed]);
 
   return (
     <AnimatePresence>
@@ -226,11 +235,16 @@ export default function OpeningQuestion({ onSelect }: OpeningQuestionProps) {
 
                 <motion.button
                   onClick={handlePlayAndProceed}
+                  disabled={isLoading}
                   whileTap={{ scale: 0.94 }}
                   aria-label="Play music and start journey"
-                  className="flex h-20 w-20 md:h-24 md:w-24 items-center justify-center rounded-full shadow-[0_16px_40px_rgba(0,0,0,0.5)] transition-all duration-500 hover:scale-105 bg-white text-zinc-900 border border-white/20 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] group"
+                  className="flex h-20 w-20 md:h-24 md:w-24 items-center justify-center rounded-full shadow-[0_16px_40px_rgba(0,0,0,0.5)] transition-all duration-500 hover:scale-105 bg-white text-zinc-900 border border-white/20 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] group disabled:opacity-80 disabled:hover:scale-100"
                 >
-                  <Play className="ml-1.5 h-8 w-8 md:h-10 md:w-10 group-hover:scale-110 transition-transform" fill="currentColor" />
+                  {isLoading ? (
+                    <div className="h-8 w-8 md:h-10 md:w-10 rounded-full border-[3px] border-zinc-900/20 border-t-zinc-900 animate-spin" />
+                  ) : (
+                    <Play className="ml-1.5 h-8 w-8 md:h-10 md:w-10 group-hover:scale-110 transition-transform" fill="currentColor" />
+                  )}
                 </motion.button>
 
                 <button

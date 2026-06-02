@@ -107,8 +107,8 @@ function MemoryCard({
       viewport={{ once: true, margin: "-50px" }}
       animate={{
         // Gentle float when music plays. The active card floats slightly higher with more presence.
-        y: isPlaying ? (isActive ? [0, -12, 0] : [0, -6, 0]) : 0,
-        scale: isActive ? 1.05 : isHoveredOrClicked ? 1.04 : 1,
+        y: isPlaying ? (isActive ? [0, -18, 0] : [0, -8, 0]) : 0,
+        scale: isActive ? 1.06 : isHoveredOrClicked ? 1.04 : 1,
         rotate: isActive ? 0 : isHoveredOrClicked ? 0 : memory.rotate,
         zIndex: isActive || isHoveredOrClicked ? 30 : 10,
       }}
@@ -212,6 +212,8 @@ function MemoryCard({
 }
 
 export default function MemoryGallery() {
+  const { isPlaying } = useAudio();
+
   return (
     <section
       id="memories"
@@ -219,11 +221,19 @@ export default function MemoryGallery() {
       aria-label="Memory gallery"
     >
       {/* Background soft ambient glow */}
-      <div
+      <motion.div
         className="absolute inset-0 pointer-events-none"
+        animate={{
+          opacity: isPlaying ? [0.6, 1, 0.6] : 0.4
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
         style={{
           background:
-            "radial-gradient(circle 50vw at 50% 50%, rgba(253,230,138,0.015) 0%, transparent 80%)",
+            "radial-gradient(circle 50vw at 50% 50%, rgba(253,230,138,0.018) 0%, transparent 80%)",
         }}
       />
 

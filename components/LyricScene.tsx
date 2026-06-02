@@ -23,6 +23,7 @@ import {
 } from "framer-motion";
 import { useAudio } from "./AudioProvider";
 import SpaceImageFrame from "./SpaceImageFrame";
+import LoveParticles from "./LoveParticles";
 
 const SMOOTH_EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -166,20 +167,43 @@ export default function LyricScene({
         >
           {/* Main lyric text */}
           <div className="relative group/lyric">
-            <h2
-              className="font-serif text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-medium leading-none pb-2 tracking-tight transition-all duration-700 select-text"
-              style={{
-                backgroundImage: isActive
-                  ? index % 2 === 0
-                    ? "linear-gradient(180deg, #ffffff 0%, #fef3c7 60%, #e0a96d 100%)"
-                    : "linear-gradient(180deg, #ffffff 0%, #d1fae5 60%, #6ee7b7 100%)"
-                  : "linear-gradient(180deg, #a1a1aa 0%, #52525b 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
+            <motion.h2
+              className="flex flex-wrap font-serif text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-medium leading-none pb-2 tracking-tight transition-all duration-700 select-text"
+              initial="hidden"
+              animate={isActive ? "visible" : "hidden"}
+              variants={{
+                visible: { transition: { staggerChildren: 0.1 } },
+                hidden: { transition: { staggerChildren: 0.05, staggerDirection: -1 } },
               }}
             >
-              {lyric}
-            </h2>
+              {lyric.split(" ").map((word, i) => (
+                <motion.span
+                  key={i}
+                  className="mr-3 sm:mr-4 md:mr-5 lg:mr-6 last:mr-0 inline-block"
+                  style={{
+                    backgroundImage: isActive
+                      ? index % 2 === 0
+                        ? "linear-gradient(180deg, #ffffff 0%, #fef3c7 60%, #e0a96d 100%)"
+                        : "linear-gradient(180deg, #ffffff 0%, #d1fae5 60%, #6ee7b7 100%)"
+                      : "linear-gradient(180deg, #a1a1aa 0%, #52525b 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    willChange: "transform, opacity, filter",
+                  }}
+                  variants={{
+                    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      filter: "blur(0px)",
+                      transition: { duration: 0.9, ease: SMOOTH_EASE },
+                    },
+                  }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.h2>
             {/* Hover underline */}
             <div
               className={`h-[1px] w-0 group-hover/lyric:w-full bg-gradient-to-r ${
@@ -272,6 +296,21 @@ export default function LyricScene({
           </AnimatePresence>
         </motion.div>
       </motion.div>
+
+      {/* Inject LoveParticles during chorus peak for emotional impact */}
+      <AnimatePresence>
+        {isActive && isChorus && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5 }}
+            className="absolute inset-0 z-0 pointer-events-none"
+          >
+            <LoveParticles variant="float" trigger={true} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
