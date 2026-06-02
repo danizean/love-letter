@@ -3,7 +3,7 @@
 import { useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAudio } from "./AudioProvider";
-import { OpeningPhase } from "@/app/page";
+import { OpeningPhase } from "./ClientLetterOrchestrator";
 import LoveParticles from "./LoveParticles";
 import OpeningNote from "./OpeningNote";
 

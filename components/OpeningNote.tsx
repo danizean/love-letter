@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence, Transition } from "framer-motion";
 import { useState, useEffect } from "react";
-import { OpeningPhase } from "@/app/page";
+import { OpeningPhase } from "./ClientLetterOrchestrator";
 
 interface OpeningNoteProps {
   phase: OpeningPhase;
