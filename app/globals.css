@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+/* ============================================
+   DIGITAL LOVE LETTER — Global Styles
+   Dark, cinematic, editorial design system
+   ============================================ */
+
+/* --- Tailwind v4 Theme Tokens --- */
+@theme inline {
+  --color-background: #09090b;
+  --color-foreground: #f4f4f5;
+  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-inter);
+}
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+/* --- Base Styles --- */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #09090b;
+  color: #f4f4f5;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+
+/* --- Performance Utilities --- */
+.smooth-transform {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.gpu {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* --- Custom Scrollbar --- */
+::-webkit-scrollbar {
+  width: 0px;
+  display: none;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) #09090b;
+}
+
+/* --- Noise Overlay removed for performance --- */
+
+/* --- Floating Gradient Blob Animations --- */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.05);
+  }
+  66% {
+    transform: translate(-20px, 30px) scale(0.95);
+  }
+}
+
+@keyframes float-slower {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-40px, -30px) scale(1.1);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(20px);
+    opacity: 0;
+  }
+}
+
+@keyframes drift-x {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* --- Selection Styling --- */
+::selection {
+  background: rgba(253, 230, 138, 0.2);
+  color: #fde68a;
+}
+
+/* --- Focus Visible --- */
+:focus-visible {
+  outline: 2px solid rgba(253, 230, 138, 0.5);
+  outline-offset: 2px;
+}
+
+/* --- Progress Bar Glow --- */
+.progress-glow {
+  box-shadow: 0 0 8px rgba(253, 230, 138, 0.4);
+}
+
+@media (max-width: 768px) {
+  .progress-glow {
+    box-shadow: 0 0 6px rgba(253, 230, 138, 0.3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
